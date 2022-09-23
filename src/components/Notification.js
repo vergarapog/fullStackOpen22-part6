@@ -1,11 +1,11 @@
-import { useSelector, useDispatch } from "react-redux"
+import { connect } from "react-redux"
 import { useEffect } from "react"
 import { resetNotif } from "../reducers/notifReducer"
 
-const Notification = () => {
-  const message = useSelector((state) => state.notification.message)
-  const time = useSelector((state) => state.notification.time)
-  const dispatch = useDispatch()
+const Notification = (props) => {
+  // const message = useSelector((state) => state.notification.message)
+  // const time = useSelector((state) => state.notification.time)
+  // const dispatch = useDispatch()
   const style = {
     border: "solid",
     padding: 10,
@@ -14,15 +14,25 @@ const Notification = () => {
 
   useEffect(() => {
     const notifTimer = setTimeout(() => {
-      dispatch(resetNotif())
-    }, `${time}000`)
+      props.resetNotif()
+    }, `${props.notification.time}000`)
     return () => clearTimeout(notifTimer)
   })
 
-  if (message === "") {
+  if (props.notification.message === "") {
     return
   }
-  return <div style={style}>{message}</div>
+  return <div style={style}>{props.notification.message}</div>
 }
 
-export default Notification
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification,
+  }
+}
+
+const ConnectedNotification = connect(mapStateToProps, { resetNotif })(
+  Notification
+)
+
+export default ConnectedNotification
